@@ -40,7 +40,7 @@ public class Singularity {
         this(id, name, colors, ingredient, -1, !FabricLoader.getInstance().isDevelopmentEnvironment() ? ModConfig.singularityTimeRequired.get() : 240);
     }
 
-    public Singularity(ResourceLocation id, String name, int[] colors, String tag, int ingredientCount, int timeRequired) {
+    public Singularity(ResourceLocation id, String name, int[] colors, String tag, int ingredientCount, int timeRequired, boolean enabled, boolean recipeDisabled) {
         this.id = id;
         this.name = name;
         this.colors = colors;
@@ -48,10 +48,12 @@ public class Singularity {
         this.tag = tag;
         this.ingredientCount = ingredientCount;
         this.timeRequired = timeRequired;
+        this.enabled = enabled;
+        this.recipeDisabled = recipeDisabled;
     }
 
-    public Singularity(ResourceLocation id, String name, int[] colors, String tag) {
-        this(id, name, colors, tag, -1, !FabricLoader.getInstance().isDevelopmentEnvironment() ? ModConfig.singularityTimeRequired.get() : 240);
+    public Singularity(ResourceLocation id, String name, int[] colors, String tag, boolean enabled, boolean recipeDisabled) {
+        this(id, name, colors, tag, -1, !FabricLoader.getInstance().isDevelopmentEnvironment() ? ModConfig.singularityTimeRequired.get() : 240, enabled, recipeDisabled);
     }
 
 
@@ -109,7 +111,8 @@ public class Singularity {
     }
 
     public boolean isRecipeDisabled() {
-        return recipeDisabled;
+        //return recipeDisabled;
+        return !enabled;
     }
 
     public void setRecipeDisabled(boolean recipeDisabled) {
@@ -134,7 +137,7 @@ public class Singularity {
 
         int ingredientCount = buffer.readVarInt();
 
-        Singularity singularity = isTagIngredient ? new Singularity(id, name, colors, tag, ingredientCount, timeRequired)
+        Singularity singularity = isTagIngredient ? new Singularity(id, name, colors, tag, ingredientCount, timeRequired, true, false)
                 : new Singularity(id, name, colors, ingredient, ingredientCount, timeRequired);
 
         singularity.enabled = buffer.readBoolean();

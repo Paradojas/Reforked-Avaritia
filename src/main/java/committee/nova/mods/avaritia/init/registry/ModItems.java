@@ -24,13 +24,15 @@ import io.github.fabricators_of_create.porting_lib.extensions.extensions.BlockIt
 import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
 import io.github.fabricators_of_create.porting_lib.util.RegistryObject;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static net.minecraft.world.item.Rarity.RARE;
@@ -71,7 +73,7 @@ public class ModItems {
     public static RegistryObject<Item> infinity_shovel = item("infinity_shovel", InfinityShovelItem::new);
     public static RegistryObject<Item> infinity_axe = item("infinity_axe", InfinityAxeItem::new);
     public static RegistryObject<Item> infinity_hoe = item("infinity_hoe", InfinityHoeItem::new);
-    public static RegistryObject<Item> matter_cluster = item("matter_cluster", MatterClusterItem::new);
+    public static RegistryObject<Item> matter_cluster = item("matter_cluster", () -> new MatterClusterItem());
     //weapons
     public static RegistryObject<Item> infinity_sword = item("infinity_sword", InfinitySwordItem::new);
     public static RegistryObject<Item> skull_sword = item("skull_fire_sword", SkullsSwordItem::new);

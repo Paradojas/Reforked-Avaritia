@@ -1,6 +1,8 @@
 package committee.nova.mods.avaritia.util;
 
 import com.google.common.collect.Sets;
+import committee.nova.mods.avaritia.Avaritia;
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.item.ItemStackWrapper;
 import committee.nova.mods.avaritia.common.item.ArmorInfinityItem;
 import committee.nova.mods.avaritia.common.item.MatterClusterItem;
@@ -21,8 +23,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -112,8 +117,12 @@ public class ToolUtil {
 
     public static void spawnClusters(Level world, Player player, Set<ItemStack> drops) {
         if (!world.isClientSide) {
+
             List<ItemStack> clusters = MatterClusterItem.makeClusters(drops);
             for (ItemStack cluster : clusters) {
+                Static.LOGGER.info("CLUSTER SPAWNED at " + player.getX() + " | " + player.getY() + " | " + player.getZ());
+                Static.LOGGER.info("Cluster NBT: " + cluster.getTag());
+
                 Containers.dropItemStack(world, player.getX(), player.getY(), player.getZ(), cluster);
             }
         }

@@ -1,6 +1,7 @@
 package committee.nova.mods.avaritia.common.crafting.recipe;
 
 import com.google.gson.JsonObject;
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.crafting.ISpecialRecipe;
 import committee.nova.mods.avaritia.api.common.item.InvWrapper;
 import committee.nova.mods.avaritia.api.util.RecipeMatcher;

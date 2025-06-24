@@ -50,7 +50,7 @@ public class RecipeUtil {
     }
 
     public static void onRecipesUpdated() {
-        RecipesUpdatedCallback.EVENT.register(manager -> recipeManager = manager);
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) RecipesUpdatedCallback.EVENT.register(manager -> recipeManager = manager);
     }
 
     public static RecipeManager getRecipeManager() {

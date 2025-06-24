@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.common.item;
 
+import committee.nova.mods.avaritia.Static;
 import committee.nova.mods.avaritia.api.common.item.ItemStackWrapper;
 import committee.nova.mods.avaritia.common.entity.ImmortalItemEntity;
 import committee.nova.mods.avaritia.init.registry.ModEntities;
@@ -48,6 +49,7 @@ public class MatterClusterItem extends Item {
                 .stacksTo(1));
     }
 
+
     public static List<ItemStack> makeClusters(Set<ItemStack> input) {
         Map<ItemStackWrapper, Integer> items = ToolUtil.collateMatterCluster(input);
         List<ItemStack> clusters = new ArrayList<>();
@@ -61,6 +63,7 @@ public class MatterClusterItem extends Item {
             ItemStackWrapper wrap = e.getKey();
             int wrapcount = e.getValue();
 
+            Static.LOGGER.info(wrapcount + " + " + (CAPACITY- currentTotal));
             int count = Math.min(CAPACITY - currentTotal, wrapcount);
 
             if (!currentItems.containsKey(e.getKey())) {
@@ -75,6 +78,9 @@ public class MatterClusterItem extends Item {
                 itemlist.remove(0);
             }
 
+            //Static.LOGGER.info(currentItems.toString());
+
+            //If the value of the current amount of items is equal to the max capacity, then add a cluster and reset the current items.
             if (currentTotal == CAPACITY) {
                 ItemStack cluster = makeCluster(currentItems);
 
@@ -84,6 +90,8 @@ public class MatterClusterItem extends Item {
                 currentItems = new HashMap<>();
             }
         }
+
+        //Static.LOGGER.info(currentItems.toString());
 
         if (currentTotal > 0) {
             ItemStack cluster = makeCluster(currentItems);
@@ -100,6 +108,7 @@ public class MatterClusterItem extends Item {
         for (int num : input.values()) {
             total += num;
         }
+
         setClusterData(cluster, input, total);
         return cluster;
     }
@@ -142,6 +151,7 @@ public class MatterClusterItem extends Item {
             itemtag.putInt(COUNTTAG, entry.getValue());
             list.add(itemtag);
         }
+
         clustertag.put(LISTTAG, list);
         clustertag.putInt(MAINCOUNTTAG, count);
         stack.getOrCreateTag().put(MAINTAG, clustertag);
@@ -234,10 +244,10 @@ public class MatterClusterItem extends Item {
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
-    @Override
+    /*@Override
     public boolean hasCustomEntity(ItemStack stack) {
         return true;
-    }
+    }*/
 
     @Nullable
     @Override

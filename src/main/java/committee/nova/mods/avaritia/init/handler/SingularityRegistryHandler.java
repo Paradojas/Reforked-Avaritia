@@ -13,9 +13,12 @@ import committee.nova.mods.avaritia.init.registry.ModSingularities;
 import committee.nova.mods.avaritia.util.SingularityUtil;
 import io.github.fabricators_of_create.porting_lib.entity.events.OnDatapackSyncCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -45,7 +49,28 @@ public class SingularityRegistryHandler {
     }
 
     public static void init(){
+
         onDataPackSync();
+
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return new ResourceLocation("avaritia", "singularity_reload");
+            }
+
+            public void onResourceManagerReload(net.minecraft.server.packs.resources.ResourceManager manager) {
+                SingularityRegistryHandler.getInstance().onResourceManagerReload();
+            }
+        });
+
+        OnDatapackSyncCallback.EVENT.register((list, player) -> {
+            var message = new SyncSingularitiesPacket(SingularityRegistryHandler.getInstance().getSingularities());
+            if (player != null) {
+                NetworkHandler.getChannel().sendToClient(message, player);
+            } else {
+                NetworkHandler.getChannel().sendToClients(message, list.getPlayers());
+            }
+        });
     }
 
     private static void onDataPackSync() {
@@ -85,8 +110,18 @@ public class SingularityRegistryHandler {
     public void writeDefaultSingularityFiles() {
         var dir = FabricLoader.getInstance().getConfigDir().resolve("avaritia/singularities/").toFile();
 
-        if (!dir.exists() && dir.mkdirs()) {
-            Static.LOGGER.warn("Could not find default singularities,try to generate!");
+        // Create the directory if it doesn't exist
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                Static.LOGGER.error("Failed to create singularity config directory!");
+                return;
+            }
+        }
+
+        // If the directory is empty, regenerate default files
+        File[] files = dir.listFiles((file) -> file.getName().endsWith(".json"));
+        if (files == null || files.length == 0) {
+            Static.LOGGER.warn("No singularities found, generating default singularities...");
             for (var singularity : ModSingularities.getDefaults()) {
                 var json = SingularityUtil.writeToJson(singularity);
                 FileWriter writer = null;
@@ -94,7 +129,6 @@ public class SingularityRegistryHandler {
                 try {
                     var file = new File(dir, singularity.getId().getPath() + ".json");
                     writer = new FileWriter(file, StandardCharsets.UTF_8);
-
                     GSON.toJson(json, writer);
                     writer.close();
                 } catch (Exception e) {

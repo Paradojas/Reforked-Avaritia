@@ -65,7 +65,6 @@ public class InfinityHandler {
         onGetHurt();
         onLivingDrops();
         onPlayerMine();
-        onTooltip();
         handleExtraLuck();
         digging();
         canHarvest();

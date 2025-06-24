@@ -46,7 +46,7 @@ public class SingularityUtil {
             singularity = new Singularity(id, name, new int[]{overlayColor, underlayColor}, Ingredient.EMPTY, materialCount, time);
         } else if (ing.has("tag")) {
             var tag = ing.get("tag").getAsString();
-            singularity = new Singularity(id, name, new int[]{overlayColor, underlayColor}, tag, materialCount, time);
+            singularity = new Singularity(id, name, new int[]{overlayColor, underlayColor}, tag, materialCount, time, true, false);
         } else {
             var ingredient = Ingredient.fromJson(json.get("ingredient"));
             singularity = new Singularity(id, name, new int[]{overlayColor, underlayColor}, ingredient, materialCount, time);
