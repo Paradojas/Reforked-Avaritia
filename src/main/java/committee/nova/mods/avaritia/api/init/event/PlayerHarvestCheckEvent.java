@@ -1,8 +1,10 @@
 package committee.nova.mods.avaritia.api.init.event;
 
+import committee.nova.mods.avaritia.compat.NTPCompat;
 import io.github.fabricators_of_create.porting_lib.entity.events.PlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -32,11 +34,18 @@ public class PlayerHarvestCheckEvent extends PlayerEvents {
     }
 
     public BlockState getTargetBlock() { return this.state; }
-    public boolean canHarvest() { return this.success; }
-    public void setCanHarvest(boolean success){ this.success = success; }
+    public boolean canHarvest() {
+            return this.success;
+    }
+    public void setCanHarvest(boolean success)
+    {
+        this.success = success;
+    }
 
     @Override
     public void sendEvent() {
         HARVEST_CHECK.invoker().check(this);
     }
+
+
 }

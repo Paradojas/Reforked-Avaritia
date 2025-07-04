@@ -1,5 +1,6 @@
 package committee.nova.mods.avaritia.api.init.event;
 
+import committee.nova.mods.avaritia.Static;
 import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
@@ -29,6 +30,7 @@ public class ModEventFactory {
     {
         PlayerHarvestCheckEvent event = new PlayerHarvestCheckEvent(player, state, success);
         event.sendEvent();
+        Static.LOGGER.info(event.canHarvest());
         return event.canHarvest();
     }
 

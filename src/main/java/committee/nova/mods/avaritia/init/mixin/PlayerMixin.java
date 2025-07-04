@@ -35,12 +35,25 @@ public abstract class PlayerMixin extends LivingEntity {
         super(entityType, level);
     }
 
-    @Inject(
+    /*@Inject(
             method = "hasCorrectToolForDrops",
             at = @At(value = "HEAD"),
             cancellable = true)
     private void placeNewPlayer1(BlockState blockState, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(ModEventFactory.doPlayerHarvestCheck(player, blockState, !blockState.requiresCorrectToolForDrops() || this.inventory.getSelected().isCorrectToolForDrops(blockState)));
+        cir.setReturnValue(ModEventFactory.doPlayerHarvestCheck(
+                player, blockState,
+                !blockState.requiresCorrectToolForDrops() || this.inventory.getSelected().isCorrectToolForDrops(blockState)
+        ));
         cir.cancel();
+    }*/
+
+    @Inject(
+            method = "hasCorrectToolForDrops",
+            at = @At("TAIL"), // <-- Let vanilla + other mods (like NTP) run first
+            cancellable = true)
+    private void afterVanillaAndMods(BlockState blockState, CallbackInfoReturnable<Boolean> cir) {
+        boolean ntpResult = cir.getReturnValue(); // This includes NTP's logic
+        boolean finalResult = ModEventFactory.doPlayerHarvestCheck(player, blockState, ntpResult);
+        cir.setReturnValue(finalResult); // Avaritia can override
     }
 }
